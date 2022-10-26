@@ -19,20 +19,13 @@ hq_test = pandas.read_json(path_or_buf='candidates/livivo_hq_test_100.jsonl', li
 # Testing extracting data - using query 1 from the training candidate dataset
 query_list = (hq_can_train[hq_can_train.qid.eq(1)])['candidates'][0]
 
-# Testing reading in the meta-data dataset as an example - probably a faster way to do this
-meta_data = pandas.read_json(path_or_buf='meta-data.jsonl', lines=True)
-meta_data2 = dict()
-for i in range(len(meta_data)):
-    data_entry = dict(meta_data[0][i])
-    meta_data2[data_entry["DBRECORDID"]] = data_entry
-    
-# Filter meta_data2 to the ids seen in query_list:
-data_list = dict()
-for i in range(len(query_list)):
-    if query_list[i] in meta_data2:
-        data_list[query_list[i]] = meta_data2[query_list[i]]
-    else:
-        continue
+# Testing reading in the meta-data dataset as a substitute for the large data files
+meta_data = pandas.read_json(path_or_buf='meta-data.jsonl', lines = True)
+
+# Filter meta_data to the ids seen in query_list:
+data_list = meta_data[meta_data.DBRECORDID.isin(query_list)]
+
+
 
 
 
