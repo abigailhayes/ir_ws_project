@@ -32,3 +32,6 @@ for i in range(len(queries)):
     extra_data = queries.loc[[i]]
     new_data = data_list.merge(extra_data, how='cross')[['qid', 'qstr', 'DBRECORDID', 'TITLE', 'ABSTRACT']].rename(columns={'DBRECORDID': 'recordid', 'TITLE': 'title', 'ABSTRACT': 'abstract'})
     query = pandas.concat([query, new_data])
+    
+# Saving the final file
+query.to_json(path_or_buf='output.jsonl')
