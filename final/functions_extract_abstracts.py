@@ -2,8 +2,8 @@
 import pandas
 
 # File names
-name_queries = list('livivo_hq_test_100_candidates.jsonl')
-name_data_files = list('livivo_agris.jsonl',
+name_queries = ['livivo_hq_test_100_candidates.jsonl']
+name_data_files = ['livivo_agris.jsonl',
                        'livivo_medline_00.jsonl',
                        'livivo_medline_01.jsonl',
                        'livivo_medline_02.jsonl',
@@ -15,7 +15,7 @@ name_data_files = list('livivo_agris.jsonl',
                        'livivo_medline_08.jsonl',
                        'livivo_medline_09.jsonl',
                        'livivo_medline_10.jsonl',
-                       'livivo_nlm.jsonl')
+                       'livivo_nlm.jsonl']
 
 # Reading in data
 queries = pandas.read_json(path_or_buf='livivo_hq_test_100_candidates.jsonl', lines=True)
