@@ -27,4 +27,4 @@ for i, file_name in enumerate(name_data_files):
     query = query.merge(new_data, left_on='candidates', right_on='DBRECORDID', how='left')
     
 # Saving the final file
-query.to_json(path_or_buf='output.jsonl')
+query.to_csv(path_or_buf='output.jsonl')
