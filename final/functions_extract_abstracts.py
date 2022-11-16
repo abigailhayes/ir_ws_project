@@ -18,13 +18,13 @@ name_data_files = ['livivo_agris.jsonl',
                        'livivo_nlm.jsonl']
 
 # Setting up desired documents for each query
-queries = pandas.read_json(path_or_buf='candidates/livivo_hq_test_100_candidates.jsonl', lines=True)
-query = queries.explode('candidates').set_index('candidates')
+queries = pandas.read_json(path_or_buf='livivo_hq_test_100_candidates.jsonl', lines=True)
+query = queries.explode('candidates')
 
 # Finding the relevent documents from each data file
 for i, file_name in enumerate(name_data_files):
-    new_data = pandas.read_json(path_or_buf=file_name, lines=True).set_index('DBRECORDID')
-    query = pandas.query.join(new_data)
+    new_data = pandas.read_json(path_or_buf=file_name, lines=True)
+    query = query.merge(new_data, left_on='candidates', right_on='DBRECORDID', how='left')
     
 # Saving the final file
 query.to_json(path_or_buf='output.jsonl')
