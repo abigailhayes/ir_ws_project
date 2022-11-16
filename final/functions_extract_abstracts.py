@@ -1,5 +1,7 @@
 # Modules needed
 import pandas
+import json
+import numpy as np
 
 # File names
 name_queries = ['livivo_hq_test_100_candidates.jsonl']
@@ -20,12 +22,21 @@ name_data_files = ['livivo_agris.jsonl',
 # Setting up desired documents for each query
 queries = pandas.read_json(path_or_buf='livivo_hq_test_100_candidates.jsonl', lines=True)
 query = queries.explode('candidates')
+query[['abstract','title', 'keywords']] = np.nan
+id_values = query["candidates"]
 
 # Finding the relevent documents from each data file
 for i, file_name in enumerate(name_data_files):
-    new_data = pandas.read_json(path_or_buf=file_name, lines=True)
-    query = query.merge(new_data, left_on='candidates', right_on='DBRECORDID', how='left')
-    del new_data
+    with open(file_name, "rb") as f:
+        for line in f:
+            record = json.loads(line)
+            if record["DBRECORDID"] in id_values.values:
+                if "ABSTRACT" in record:
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'abstract']=[record["ABSTRACT"]]
+                if "TITLE" in record:
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'title']=[[record["TITLE"]]]
+                if "KEYWORDS" in record:
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'keywords']=[record["KEYWORDS"]]
     
 # Saving the final file
 query.to_csv(path_or_buf='output.csv')
