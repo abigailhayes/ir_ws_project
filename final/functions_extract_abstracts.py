@@ -25,6 +25,7 @@ query = queries.explode('candidates')
 for i, file_name in enumerate(name_data_files):
     new_data = pandas.read_json(path_or_buf=file_name, lines=True)
     query = query.merge(new_data, left_on='candidates', right_on='DBRECORDID', how='left')
+    del new_data
     
 # Saving the final file
-query.to_csv(path_or_buf='output.jsonl')
+query.to_csv(path_or_buf='output.csv')
