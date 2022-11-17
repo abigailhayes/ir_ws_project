@@ -36,7 +36,7 @@ for i, file_name in enumerate(name_data_files):
                 if "TITLE" in record:
                     query.loc[query['candidates'] == record["DBRECORDID"], 'title']=[[record["TITLE"]]]
                 if "KEYWORDS" in record:
-                    query.loc[query['candidates'] == record["DBRECORDID"], 'keywords']=[record["KEYWORDS"]]
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'keywords']=[[record["KEYWORDS"]]]
     
 # Saving the final file
 query.to_csv(path_or_buf='output.csv')
