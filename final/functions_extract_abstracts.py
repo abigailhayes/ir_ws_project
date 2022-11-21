@@ -32,11 +32,14 @@ for i, file_name in enumerate(name_data_files):
             record = json.loads(line)
             if record["DBRECORDID"] in id_values.values:
                 if "ABSTRACT" in record:
-                    query.loc[query['candidates'] == record["DBRECORDID"], 'abstract']=[record["ABSTRACT"]]
+                    abstract = [record["ABSTRACT"]]
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'abstract']=abstract
                 if "TITLE" in record:
-                    query.loc[query['candidates'] == record["DBRECORDID"], 'title']=[[record["TITLE"]]]
+                    title = [[record["TITLE"]]]
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'title']=title
                 if "KEYWORDS" in record:
-                    query.loc[query['candidates'] == record["DBRECORDID"], 'keywords']=[[record["KEYWORDS"]]]
+                    keyword = [[record["KEYWORDS"]]]
+                    query.loc[query['candidates'] == record["DBRECORDID"], 'keywords']=keyword
     
 # Saving the final file
 query.to_csv(path_or_buf='output.csv')
