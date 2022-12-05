@@ -75,7 +75,7 @@ def bm25(doc, query):
             if record_id not in d[qid]:
                 d[qid][record_id] = -1000
 
-    for entry in d:
-        d[entry] = sorted(d[entry].items(), key=lambda x: x[1], reverse=True)
+    '''for entry in d:
+        d[entry] = sorted(d[entry].items(), key=lambda x: x[1], reverse=True)'''
 
     return d
