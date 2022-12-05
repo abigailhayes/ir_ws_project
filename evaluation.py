@@ -1,7 +1,11 @@
 import pandas as pd
 import math
+import os
 from collections import defaultdict
 from statistics import mean
+from bm25 import bm25
+from VSM_code_v2 import vsm
+from baseline import baseline
 
 def eval_single(rel_dict, pooled_path):
     
@@ -40,3 +44,46 @@ def eval_single(rel_dict, pooled_path):
     
     return(mean(ndcg_dict.values()))
 
+def all_eval():
+    # Filenames
+    directory = os.getcwd()
+    doc_nostem_nostop = directory+"/Preprocessed&Translation/PPTranslatedAbstract_Title_WithoutStopWithoutStem.csv"
+    doc_nostem_stop = directory+"/Preprocessed&Translation/PPTranslatedAbstract_Title_WithStopWithoutStem.csv"
+    doc_stem_nostop = directory+"/Preprocessed&Translation/PPTranslatedAbstract_Title_WithoutStopWithStem.csv"
+    doc_stem_stop = directory+"/Preprocessed&Translation/PPTranslatedAbstract_Title_WithStopWithStem.csv"
+    query_stem = directory+"/Preprocessed&Translation/PPTranslatedQueryWithStem.csv"
+    query_nostem = directory+"/Preprocessed&Translation/PPTranslatedQueryWithoutStem.csv"
+    pooled_path = directory+"/pooling_judgements.csv"
+    
+    output = pd.DataFrame(columns=['nostem_nostop','nostem_stop','stem_nostop','stem_stop'],
+                          index=['baseline', 'bm25', 'vsm'])
+    
+    # VSM
+    output.loc[["vsm"],["nostem_nostop"]]=eval_single(vsm(doc_nostem_nostop, query_nostem), pooled_path)
+    output.loc[["vsm"],["nostem_stop"]]=eval_single(vsm(doc_nostem_stop, query_nostem), pooled_path)
+    output.loc[["vsm"],["stem_nostop"]]=eval_single(vsm(doc_stem_nostop, query_stem), pooled_path)
+    output.loc[["vsm"],["stem_stop"]]=eval_single(vsm(doc_stem_stop, query_stem), pooled_path)
+    
+    # Read in files for baseline and BM25
+    docnono = pd.read_csv(filepath_or_buffer=doc_nostem_nostop, converters={"Preprocessed_Abstract": lambda x: x.strip("[]").replace("'","").split(", ")})
+    docnoyes = pd.read_csv(filepath_or_buffer=doc_nostem_stop, converters={"Preprocessed_Abstract": lambda x: x.strip("[]").replace("'","").split(", ")})
+    docyesno = pd.read_csv(filepath_or_buffer=doc_stem_nostop, converters={"Preprocessed_Abstract": lambda x: x.strip("[]").replace("'","").split(", ")})
+    docyesyes = pd.read_csv(filepath_or_buffer=doc_stem_stop, converters={"Preprocessed_Abstract": lambda x: x.strip("[]").replace("'","").split(", ")})
+    queryyes = pd.read_csv(filepath_or_buffer=query_stem, converters={"Preprocessing": lambda x: x.strip("[]").replace("'","").split(", "), "candidates": lambda x: x.strip("[]").replace("'","").split(", ")})
+    queryno = pd.read_csv(filepath_or_buffer=query_nostem, converters={"Preprocessing": lambda x: x.strip("[]").replace("'","").split(", "), "candidates": lambda x: x.strip("[]").replace("'","").split(", ")})
+    
+    # Baseline
+    output.loc[["baseline"],["nostem_nostop"]]=eval_single(baseline(docnono, queryno), pooled_path)
+    output.loc[["baseline"],["nostem_stop"]]=eval_single(baseline(docnoyes, queryno), pooled_path)
+    output.loc[["baseline"],["stem_nostop"]]=eval_single(baseline(docyesno, queryyes), pooled_path)
+    output.loc[["baseline"],["stem_stop"]]=eval_single(baseline(docyesyes, queryyes), pooled_path)
+    
+    # BM25
+    output.loc[["bm25"],["nostem_nostop"]]=eval_single(bm25(docnono, queryno), pooled_path)
+    output.loc[["bm25"],["nostem_stop"]]=eval_single(bm25(docnoyes, queryno), pooled_path)
+    output.loc[["bm25"],["stem_nostop"]]=eval_single(bm25(docyesno, queryyes), pooled_path)
+    output.loc[["bm25"],["stem_stop"]]=eval_single(bm25(docyesyes, queryyes), pooled_path)
+    
+    return output
+    
+    
