@@ -33,13 +33,11 @@ def eval_single(rel_dict, pooled_path):
     for query, doc_rel in pooled_dict.items():
         for doc, relevance in doc_rel.items():
             dcg_dict[query][doc] = relevance/math.log2(ranking_dict[query][doc]+1)
-            print(ranking_dict[query][doc]+1)
             idcg_dict[query][doc] = relevance/math.log2(ideal_dict[query][doc]+1)
     
     # Calculating the nDCG for each query        
     ndcg_dict = {}
     for query, doc_val in dcg_dict.items():
-        print(doc_val.values(), " and ", idcg_dict[query].values())
         ndcg_dict[query] = sum(doc_val.values())/sum(idcg_dict[query].values())
     
     return(mean(ndcg_dict.values()))
