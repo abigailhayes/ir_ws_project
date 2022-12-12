@@ -7,7 +7,7 @@ from bm25 import bm25
 from VSM_code_v2 import vsm
 from baseline import baseline
 
-def eval_single(rel_dict, pooled_path):
+def eval_single(rel_dict, pooled_path, take_mean=True):
     
     # Read in pooled data relevance annotations. Will be a file with the document ID and a number for the relevance.
     pooled_data = pd.read_csv(pooled_path)
@@ -26,6 +26,7 @@ def eval_single(rel_dict, pooled_path):
     for i, row in pooled_data.iterrows():
         pooled_dict[row.Query][row.Document] = row.Relevance
         ideal_dict[row.Query][row.Document] = row.idcg_rank
+        
             
     # Now to compute the Discounted Cumulative Gain and Ideal DCG contribution for each query and document pair
     dcg_dict = defaultdict(dict)
@@ -40,7 +41,10 @@ def eval_single(rel_dict, pooled_path):
     for query, doc_val in dcg_dict.items():
         ndcg_dict[query] = sum(doc_val.values())/sum(idcg_dict[query].values())
     
-    return(mean(ndcg_dict.values()))
+    if take_mean:
+        return(mean(ndcg_dict.values()))
+    
+    return ndcg_dict
 
 def all_eval():
     # Filenames
@@ -84,4 +88,5 @@ def all_eval():
     
     return output
     
+
     
