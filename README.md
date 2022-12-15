@@ -16,7 +16,7 @@ The abstracts, titles and querys were then preprocessed and translated to give f
 
 ## Models
 
-We have implemented two models; [bm25.py](bm25.py) and [vsm.py](vsm.py). The vsm function takes filepaths as input, whilst the bm25 needs the files read in first as demonstrated in [run_bm25.py](run_bm25.py).
+We have implemented two models; [bm25.py](bm25.py) and [vsm.py](vsm.py) (version 2 adds in small scores for titles). The vsm function takes filepaths as input, whilst the bm25 needs the files read in first as demonstrated in [run_bm25.py](run_bm25.py).
 
 ## Evaluation
 
